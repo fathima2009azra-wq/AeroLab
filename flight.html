@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AeroLab — Flight Lab</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <header class="navbar">
+
+        <div class="logo">
+            🚀 AeroLab
+        </div>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="flight.html" class="active">Flight Lab</a>
+            <a href="#">Rocket Lab</a>
+            <a href="#">Orbit Lab</a>
+        </nav>
+
+    </header>
+
+
+    <!-- FLIGHT LAB -->
+
+    <main>
+
+        <section id="flight-lab" class="flight-lab">
+
+            <p class="eyebrow">✈️ FLIGHT LAB</p>
+
+            <h2>Can you make the aircraft fly?</h2>
+
+            <p class="lab-intro">
+                Experiment with airspeed and wing angle to discover
+                how aerodynamic forces affect an aircraft.
+            </p>
+
+
+            <div class="flight-container">
+
+                <!-- CONTROLS -->
+
+                <div class="controls">
+
+                    <h3>EXPERIMENT</h3>
+
+                    <label for="speed">
+                        Airspeed
+                        <span id="speedValue">100 km/h</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="speed"
+                        min="50"
+                        max="200"
+                        value="100"
+                    >
+
+                    <label for="angle">
+                        Wing Angle
+                        <span id="angleValue">5°</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="angle"
+                        min="0"
+                        max="15"
+                        value="5"
+                    >
+
+                    <button id="runExperiment">
+                        RUN EXPERIMENT 🚀
+                    </button>
+
+                </div>
+
+
+                <!-- AIRCRAFT VISUALIZATION -->
+
+                <div class="aircraft-area">
+
+                    <div class="airflow">
+                        → → → → →
+                    </div>
+
+                    <div id="aircraft">
+                        ✈️
+                    </div>
+
+                    <div class="force lift">
+                        ↑ LIFT
+                    </div>
+
+                    <div class="force weight">
+                        ↓ WEIGHT
+                    </div>
+
+                    <div class="force thrust">
+                        → THRUST
+                    </div>
+
+                    <div class="force drag">
+                        ← DRAG
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FLIGHT DATA -->
+
+            <div class="results">
+
+                <h3>📊 FLIGHT DATA</h3>
+
+                <div class="result-box">
+                    <span>Lift</span>
+                    <strong id="liftValue">420 N</strong>
+                </div>
+
+                <div class="result-box">
+                    <span>Drag</span>
+                    <strong id="dragValue">84 N</strong>
+                </div>
+
+            </div>
+
+
+            <!-- MISSION 01 -->
+
+            <div class="mission">
+
+                <p class="eyebrow">🎯 MISSION 01</p>
+
+                <h3>TAKE FLIGHT</h3>
+
+                <p>
+                    Adjust the controls and generate at least
+                    <strong>500 N of lift.</strong>
+                </p>
+
+                <div id="missionStatus">
+                    🟠 Keep experimenting! You need more lift.
+                </div>
+
+            </div>
+
+
+            <!-- MISSION 02 -->
+
+            <div class="mission">
+
+                <p class="eyebrow">🎯 MISSION 02</p>
+
+                <h3>BALANCE THE FORCES</h3>
+
+                <p>
+                    Generate at least <strong>500 N of lift</strong>
+                    while keeping drag below <strong>100 N.</strong>
+                </p>
+
+                <div id="mission2Status">
+                    🟠 Find the right flight conditions.
+                </div>
+
+            </div>
+
+
+            <!-- LEARNING -->
+
+            <div class="learning-box">
+
+                <p class="eyebrow">🧠 WHAT DID YOU LEARN?</p>
+
+                <h3>THE LIFT–DRAG BALANCE</h3>
+
+                <p>
+                    Higher airspeed generally increases lift, but aerodynamic
+                    drag also increases. Wing angle affects both forces, so
+                    the goal is to find an effective balance.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
