@@ -408,3 +408,47 @@ a.lab-card p {
 a.lab-card:hover {
     color: white;
 }
+
+.quote-section {
+    max-width: 1000px;
+    margin: 45px auto 80px;
+    padding: 55px 35px;
+    border-left: 3px solid #50e4c0;
+    background: linear-gradient(
+        90deg,
+        rgba(80, 228, 192, 0.06),
+        transparent
+    );
+}
+
+.quote-section h2 {
+    max-width: 850px;
+    margin: 25px 0;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.3;
+    letter-spacing: -1px;
+}
+
+.quote-section h2 span {
+    color: #50e4c0;
+}
+
+.quote-caption {
+    color: #b7cbe0;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.quote-brand {
+    margin-top: 30px;
+    color: #50e4c0;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+@media (max-width: 600px) {
+    .quote-section {
+        margin: 65px auto;
+        padding: 30px 20px;
+    }
+}
