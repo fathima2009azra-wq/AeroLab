@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AeroLab | Orbit Lab</title>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+    --bg: #07111f;
+    --panel: #101f32;
+    --line: #263c55;
+    --cyan: #67dcff;
+    --text: #edf6ff;
+    --muted: #9db1c8;
+}
+
+body {
+    margin: 0;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+
+header {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+}
+
+.eyebrow {
+    color: var(--cyan);
+    letter-spacing: 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+h1 { margin: 10px 0; font-size: clamp(30px, 5vw, 48px); }
+.subtitle { color: var(--muted); line-height: 1.6; }
+
+.dashboard {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+    gap: 20px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px;
+    min-width: 0;
+}
+
+.panel h2 {
+    margin-top: 0;
+    font-size: 17px;
+    letter-spacing: 1px;
+}
+
+.space {
+    position: relative;
+    min-height: 390px;
+    overflow: hidden;
+    border-radius: 12px;
+    background:
+        radial-gradient(ellipse at 50% 110%, #12375c 0%, #09172a 52%, #030914 100%);
+    display: grid;
+    place-items: center;
+}
+
+.stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(2px 2px at 15% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 70% 18%, #fff, transparent),
+        radial-gradient(2px 2px at 83% 70%, #a6e6ff, transparent),
+        radial-gradient(1px 1px at 24% 76%, #fff, transparent),
+        radial-gradient(1px 1px at 60% 88%, #fff, transparent),
+        radial-gradient(2px 2px at 45% 12%, #fff, transparent),
+        radial-gradient(1px 1px at 91% 35%, #fff, transparent);
+}
+
+.orbit {
+    position: absolute;
+    width: min(78%, 310px);
+    aspect-ratio: 1;
+    border: 1px dashed #67dcff85;
+    border-radius: 50%;
+    transition: width 0.35s ease;
+}
+
+.earth {
+    width: clamp(115px, 30%, 170px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    background:
+        radial-gradient(ellipse at 30% 25%, #7ddcff 0%, #2378ba 35%, #104071 67%, #06172e 100%);
+    box-shadow: 0 0 35px #248bdc8c, inset -15px -10px 25px #02091499;
+    overflow: hidden;
+}
+
+.continents {
+    position: absolute;
+    inset: 0;
+    opacity: .8;
+    background:
+        radial-gradient(ellipse at 32% 30%, #62b77b 0 12%, transparent 13%),
+        radial-gradient(ellipse at 65% 39%, #80c982 0 9%, transparent 10%),
+        radial-gradient(ellipse at 52% 65%, #4fa96f 0 15%, transparent 16%),
+        radial-gradient(ellipse at 25% 75%, #3d9467 0 7%, transparent 8%);
+    transform: rotate(-20deg);
+}
+
+.satellite-orbit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    animation: orbit 8s linear infinite;
+    pointer-events: none;
+}
+
+.satellite {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 27px;
+    height: 15px;
+    transform: translate(calc(-50% + var(--radius)), -50%);
+    filter: drop-shadow(0 0 7px #67dcff);
+}
+
+.sat-body {
+    position: absolute;
+    left: 9px;
+    top: 3px;
+    width: 9px;
+    height: 9px;
+    background: #f6d68a;
+    border: 1px solid white;
+    border-radius: 2px;
+}
+
+.sat-panel {
+    position: absolute;
+    top: 5px;
+    width: 8px;
+    height: 5px;
+    background: #398de0;
+    border: 1px solid #8fd8ff;
+}
+
+.sat-panel.left { left: 0; }
+.sat-panel.right { right: 0; }
+
+@keyframes orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.scene-label {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    color: #b6cde5;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.controls { display: grid; gap: 24px; }
+
+.control-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.control-head label { font-weight: bold; font-size: 14px; }
+.control-head output { color: var(--cyan); font-weight: bold; }
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--cyan);
+    cursor: pointer;
+}
+
+.hint { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.metric {
+    padding: 15px;
+    background: #091727;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+
+.metric-label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.metric-value {
+    margin-top: 8px;
+    font-size: clamp(19px, 2.6vw, 25px);
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.unit { color: var(--cyan); font-size: 12px; }
+
+.why { margin-top: 20px; }
+.why-title { color: var(--cyan); font-weight: bold; }
+.equation {
+    background: #081625;
+    border: 1px solid var(--line);
+    padding: 13px;
+    border-radius: 9px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+button {
+    border: 1px solid #39718d;
+    border-radius: 9px;
+    padding: 11px 15px;
+    background: #14364c;
+    color: var(--text);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover { background: #1c4a65; }
+
+footer {
+    max-width: 1200px;
+    margin: 22px auto 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+    body { padding: 14px; }
+    .dashboard { grid-template-columns: 1fr; }
+    .space { min-height: 330px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+    <div class="eyebrow">AEROLAB // ORBITAL MECHANICS</div>
+    <h1>Orbit Lab <span style="color:#67dcff">01</span></h1>
+    <p class="subtitle">
+        Mission Control: change the satellite's altitude and discover
+        how gravity determines its orbital speed and period.
+    </p>
+    <button onclick="location.href='index.html'">← Back to AeroLab</button>
+</header>
+
+<main class="dashboard">
+    <section class="panel">
+        <h2>LIVE ORBIT VISUALIZATION</h2>
+
+        <div class="space">
+            <div class="stars"></div>
+            <div class="orbit" id="orbitRing"></div>
+
+            <div class="earth">
+                <div class="continents"></div>
+            </div>
+
+            <div class="satellite-orbit" id="satelliteOrbit">
+                <div class="satellite" id="satellite">
+                    <div class="sat-panel left"></div>
+                    <div class="sat-body"></div>
+                    <div class="sat-panel right"></div>
+                </div>
+            </div>
+
+            <div class="scene-label">EARTH · CIRCULAR ORBIT MODEL</div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-label">ORBITAL VELOCITY</div>
+                <div class="metric-value" id="velocity">7.79</div>
+                <div class="unit">km/s</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-label">ORBITAL PERIOD</div>
+                <div class="metric-value" id="period">92.4</div>
+                <div class="unit">minutes per orbit</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-label">ORBIT RADIUS</div>
+                <div class="metric-value" id="radius">6,771</div>
+                <div class="unit">km from Earth's centre</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-label">GRAVITATIONAL ACCELERATION</div>
+                <div class="metric-value" id="gravity">8.69</div>
+                <div class="unit">m/s²</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>ORBIT CONFIGURATION</h2>
+
+        <div class="controls">
+            <div>
+                <div class="control-head">
+                    <label for="altitude">Satellite altitude</label>
+                    <output id="altitudeValue">400 km</output>
+                </div>
+                <input id="altitude" type="range" min="200" max="2000"
+                    step="50" value="400">
+                <p class="hint">
+                    Height above Earth's surface. The model assumes a
+                    circular orbit and ignores atmospheric drag.
+                </p>
+            </div>
+
+            <div>
+                <div class="control-head">
+                    <label for="speed">Animation speed</label>
+                    <output id="speedValue">1×</output>
+                </div>
+                <input id="speed" type="range" min="1" max="5"
+                    step="1" value="1">
+                <p class="hint">
+                    Changes only the visual animation speed—not the
+                    calculated physical orbital period.
+                </p>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button id="pauseBtn">Pause animation</button>
+                <button id="resetBtn">Reset experiment</button>
+            </div>
+        </div>
+
+        <div class="why">
+            <h2>💡 WHY DOES THIS CHANGE?</h2>
+            <p class="why-title" id="whyTitle" aria-live="polite">
+                Ready for orbital exploration
+            </p>
+            <p class="hint" id="whyExplanation">
+                Move the altitude slider to discover how a satellite's
+                speed and orbital period change with distance from Earth.
+            </p>
+            <div class="equation" id="whyImpact">
+                QUICK IMPACT: Higher circular orbits require less orbital
+                speed and take longer to complete one revolution.
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>MODEL NOTE:</strong> This is an educational, idealized
+    two-body circular-orbit simulation. It does not model atmospheric
+    drag, orbital decay, Earth's oblateness or perturbations from the Moon
+    and Sun. Real satellite missions require more detailed calculations.
+</footer>
+
+<script>
+const EARTH_RADIUS = 6371;       // km
+const MU = 398600.4418;          // km³/s², Earth's gravitational parameter
+
+const altitude = document.getElementById("altitude");
+const speedSlider = document.getElementById("speed");
+const satelliteOrbit = document.getElementById("satelliteOrbit");
+const satellite = document.getElementById("satellite");
+const orbitRing = document.getElementById("orbitRing");
+const pauseBtn = document.getElementById("pauseBtn");
+
+let previousAltitude = Number(altitude.value);
+let paused = false;
+
+function updateOrbit() {
+    const h = Number(altitude.value);
+    const r = EARTH_RADIUS + h;
+
+    // Circular-orbit equations
+    const v = Math.sqrt(MU / r);
+    const periodSeconds = 2 * Math.PI * Math.sqrt((r ** 3) / MU);
+    const periodMinutes = periodSeconds / 60;
+    const g = MU / (r * r) * 1000;
+
+    document.getElementById("altitudeValue").textContent = h + " km";
+    document.getElementById("velocity").textContent = v.toFixed(2);
+    document.getElementById("period").textContent = periodMinutes.toFixed(1);
+    document.getElementById("radius").textContent = r.toLocaleString("en-US");
+    document.getElementById("gravity").textContent = g.toFixed(2);
+
+    const visualRadius = 78 + (h - 200) / 1800 * 28;
+    orbitRing.style.width = visualRadius + "%";
+
+    // Scale the satellite's circular path to match the visible orbit ring.
+    const orbitRadius = Math.min(orbitRing.clientWidth / 2, 155);
+    satellite.style.setProperty("--radius", orbitRadius + "px");
+
+    const animationDuration = periodSeconds / 60 / Number(speedSlider.value);
+    satelliteOrbit.style.animationDuration = animationDuration + "s";
+
+    document.getElementById("speedValue").textContent =
+        speedSlider.value + "×";
+
+    if (h !== previousAltitude) {
+        document.getElementById("whyTitle").textContent =
+            "You changed the satellite's altitude.";
+        document.getElementById("whyExplanation").textContent =
+            h > previousAltitude
+            ? "The satellite is now farther from Earth's centre. Earth's gravitational pull is weaker there, so a circular orbit requires a lower speed. The satellite also has a larger path to travel."
+            : "The satellite is now closer to Earth's centre. Gravity is stronger there, so a circular orbit requires a higher speed. The shorter orbital path also contributes to a shorter period.";
+        document.getElementById("whyImpact").textContent =
+            "QUICK IMPACT: At " + h + " km altitude, circular speed is " +
+            v.toFixed(2) + " km/s and the ideal period is " +
+            periodMinutes.toFixed(1) + " minutes.";
+    }
+
+    previousAltitude = h;
+}
+
+altitude.addEventListener("input", updateOrbit);
+
+speedSlider.addEventListener("input", updateOrbit);
+
+pauseBtn.addEventListener("click", () => {
+    paused = !paused;
+    satelliteOrbit.style.animationPlayState = paused ? "paused" : "running";
+    pauseBtn.textContent = paused ? "Resume animation" : "Pause animation";
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+    altitude.value = 400;
+    speedSlider.value = 1;
+    previousAltitude = 400;
+
+    document.getElementById("whyTitle").textContent =
+        "Experiment reset";
+    document.getElementById("whyExplanation").textContent =
+        "The satellite has returned to the default 400 km circular orbit. Change the altitude to explore again.";
+    document.getElementById("whyImpact").textContent =
+        "QUICK IMPACT: Higher circular orbits require less orbital speed and take longer to complete one revolution.";
+
+    updateOrbit();
+});
+
+window.addEventListener("resize", updateOrbit);
+
+updateOrbit();
+</script>
+</body>
+</html>

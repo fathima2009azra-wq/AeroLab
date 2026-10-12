@@ -1,0 +1,767 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Lab | AeroLab</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #edf6ff;
+            background: #07111f;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 7%;
+            border-bottom: 1px solid #20354a;
+        }
+
+        .brand {
+            color: #65d5ff;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: #c7d8e9;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        main {
+            width: min(1150px, 92%);
+            margin: 40px auto;
+        }
+
+        .eyebrow {
+            color: #65d5ff;
+            letter-spacing: 3px;
+            font-size: 12px;
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            margin: 12px 0;
+        }
+
+        .intro {
+            color: #9eb2c9;
+            line-height: 1.7;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .panel {
+            background: #101f31;
+            border: 1px solid #263e55;
+            border-radius: 16px;
+            padding: 22px;
+            min-width: 0;
+        }
+
+        .panel h2 {
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin-top: 0;
+        }
+
+        .launch-scene {
+            min-height: 390px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background:
+                radial-gradient(ellipse at 50% 85%,
+                    #244d70 0%, transparent 55%),
+                linear-gradient(#102e4d, #07111f 85%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stars {
+            position: absolute;
+            inset: 0;
+            opacity: 0.65;
+            background-image:
+                radial-gradient(circle, white 1px, transparent 1.5px),
+                radial-gradient(circle, #69cfff 1px, transparent 1.5px);
+            background-size: 73px 83px, 109px 117px;
+            background-position: 10px 15px, 35px 50px;
+        }
+
+        .rocket {
+            position: relative;
+            z-index: 1;
+            width: 76px;
+            height: 190px;
+            transform: perspective(500px) rotateX(-4deg);
+            filter: drop-shadow(0 0 16px #4ba9ff55);
+        }
+
+        .nose {
+            width: 0;
+            height: 0;
+            margin: auto;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 65px solid #eaf5ff;
+        }
+
+        .body {
+            width: 50px;
+            height: 85px;
+            margin: -1px auto 0;
+            background: linear-gradient(90deg, #7898b5, #ffffff 45%, #9dbbd4);
+            border-radius: 7px 7px 4px 4px;
+            position: relative;
+        }
+
+        .window {
+            position: absolute;
+            top: 19px;
+            left: 15px;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #d8f5ff;
+            border-radius: 50%;
+            background: #167cae;
+            box-shadow: inset 0 0 8px #051b32;
+        }
+
+        .stripe {
+            position: absolute;
+            top: 53px;
+            width: 100%;
+            height: 6px;
+            background: #28b9ef;
+        }
+
+        .fin {
+            position: absolute;
+            bottom: 12px;
+            width: 25px;
+            height: 45px;
+            background: #e75c62;
+        }
+
+        .fin.left {
+            left: -17px;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+
+        .fin.right {
+            right: -17px;
+            clip-path: polygon(0 0, 100% 100%, 0 100%);
+        }
+
+        .nozzle {
+            width: 25px;
+            height: 15px;
+            margin: auto;
+            background: #758da5;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .flame {
+            width: 22px;
+            height: 65px;
+            margin: auto;
+            background: linear-gradient(#fff5a1, #ff9d36, #ff4e36, transparent);
+            clip-path: polygon(20% 0, 80% 0, 100% 40%, 50% 100%, 0 40%);
+            transform-origin: top;
+            animation: flicker 0.18s infinite alternate;
+            filter: drop-shadow(0 0 10px #ff8d36);
+        }
+
+        @keyframes flicker {
+            from { transform: scaleY(0.8) scaleX(0.85); }
+            to { transform: scaleY(1.12) scaleX(1.15); }
+        }
+
+        .scene-label {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            color: #83dfff;
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .readouts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .readout {
+            padding: 15px;
+            background: #0a1726;
+            border: 1px solid #20364b;
+            border-radius: 10px;
+        }
+
+        .readout span {
+            display: block;
+            color: #91a9c1;
+            font-size: 12px;
+        }
+
+        .readout strong {
+            display: block;
+            font-size: 24px;
+            margin-top: 8px;
+        }
+
+        .control {
+            margin: 23px 0;
+        }
+
+        .control label {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .control output {
+            color: #69d6ff;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #46c8ff;
+            cursor: pointer;
+        }
+
+        .hint {
+            color: #91a9c1;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        button {
+            flex: 1;
+            padding: 13px 10px;
+            border: 0;
+            border-radius: 8px;
+            background: #56ceff;
+            color: #061321;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background: #20374d;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .status {
+            color: #a8c1d8;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .progress {
+            height: 7px;
+            background: #24364a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress div {
+            width: 100%;
+            height: 100%;
+            background: #54d4ff;
+            transition: width 0.2s;
+        }
+
+        .equation {
+            padding: 14px;
+            background: #091624;
+            border-radius: 8px;
+            color: #b9eaff;
+            font-family: monospace;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 760px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                padding: 18px 4%;
+            }
+
+            nav a {
+                margin-left: 10px;
+                font-size: 13px;
+            }
+
+            .launch-scene {
+                min-height: 330px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .flame {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand">AEROLAB</div>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="flight.html">Flight Lab</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="eyebrow">MISSION CONTROL / 02</div>
+        <h1>Rocket Lab</h1>
+        <p class="intro">
+            Design your rocket, manage propellant and investigate
+            the physics behind a powered ascent.
+        </p>
+
+        <div class="dashboard">
+            <section class="panel">
+                <h2>LAUNCH VEHICLE</h2>
+
+                <div class="launch-scene">
+                    <div class="stars"></div>
+                    <div class="scene-label">SIMULATION VIEW / NOT TO SCALE</div>
+
+                    <div class="rocket" id="rocket">
+                        <div class="nose"></div>
+                        <div class="body">
+                            <div class="window"></div>
+                            <div class="stripe"></div>
+                        </div>
+                        <div class="fin left"></div>
+                        <div class="fin right"></div>
+                        <div class="nozzle"></div>
+                        <div class="flame" id="flame"></div>
+                    </div>
+                </div>
+
+                <div class="readouts">
+                    <div class="readout">
+                        <span>ALTITUDE</span>
+                        <strong id="altitude">0 m</strong>
+                    </div>
+                    <div class="readout">
+                        <span>VELOCITY</span>
+                        <strong id="velocity">0 m/s</strong>
+                    </div>
+                    <div class="readout">
+                        <span>ACCELERATION</span>
+                        <strong id="acceleration">0 m/s²</strong>
+                    </div>
+                    <div class="readout">
+                        <span>NET FORCE</span>
+                        <strong id="netForce">0 N</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h2>ROCKET CONFIGURATION</h2>
+
+                <div class="control">
+                    <label for="dryMass">
+                        Dry mass <output id="dryMassOut">1,000 kg</output>
+                    </label>
+                    <input id="dryMass" type="range" min="500" max="5000"
+                           step="100" value="1000">
+                </div>
+
+                <div class="control">
+                    <label for="fuelMass">
+                        Propellant <output id="fuelMassOut">2,000 kg</output>
+                    </label>
+                    <input id="fuelMass" type="range" min="500" max="8000"
+                           step="100" value="2000">
+                </div>
+
+                <div class="control">
+                    <label for="thrust">
+                        Engine thrust <output id="thrustOut">45,000 N</output>
+                    </label>
+                    <input id="thrust" type="range" min="20000" max="150000"
+                           step="5000" value="45000">
+                </div>
+
+                <div class="control">
+                    <label for="isp">
+                        Specific impulse <output id="ispOut">250 s</output>
+                    </label>
+                    <input id="isp" type="range" min="180" max="350"
+                           step="5" value="250">
+                </div>
+
+                <div class="control">
+                    <label for="area">
+                        Reference area <output id="areaOut">1.0 m²</output>
+                    </label>
+                    <input id="area" type="range" min="0.5" max="5"
+                           step="0.1" value="1">
+                </div>
+
+                <div class="control">
+                    <label for="cd">
+                        Drag coefficient <output id="cdOut">0.50</output>
+                    </label>
+                    <input id="cd" type="range" min="0.1" max="1.2"
+                           step="0.05" value="0.5">
+                </div>
+
+                <div class="readouts">
+                    <div class="readout">
+                        <span>THRUST / WEIGHT</span>
+                        <strong id="twRatio">1.53</strong>
+                    </div>
+                    <div class="readout">
+                        <span>IDEAL Δv</span>
+                        <strong id="idealDv">4.46 km/s</strong>
+                    </div>
+                </div>
+
+                <div class="control">
+                    <label>
+                        Propellant remaining
+                        <output id="fuelRemaining">100%</output>
+                    </label>
+                    <div class="progress">
+                        <div id="fuelBar"></div>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="launchButton">▶ LAUNCH</button>
+                    <button class="secondary" id="resetButton">↻ RESET</button>
+                </div>
+                <p class="status" id="status" aria-live="polite">
+                    Ready for pre-launch checks. Adjust your rocket and launch.
+                </p>
+            </section>
+        </div>
+
+        <section class="panel" style="margin-top:20px">
+            
+<section class="panel" style="margin-top:20px" id="whyPanel">
+    <h2>💡 WHY DOES THIS CHANGE?</h2>
+
+    <p id="whyTitle" style="color:#69d6ff;font-weight:bold;">
+        Ready to explore rocket physics
+    </p>
+
+    <p id="whyExplanation" class="hint" aria-live="polite">
+        Adjust any rocket parameter to discover how it affects
+        thrust, mass, fuel consumption, drag or ideal velocity change.
+    </p>
+
+    <div class="equation" id="whyImpact">
+        QUICK IMPACT: Adjust a slider to begin exploring.
+    </div>
+</section>
+
+            <h2>FLIGHT DYNAMICS</h2>
+            <p class="hint">
+                Ideal rocket equation: Δv = Isp × g₀ × ln(m₀ / mf).
+                This estimates ideal velocity change from propellant use;
+                it is not the same as actual altitude or final speed.
+            </p>
+            <div class="equation" id="equation">
+                Δv = Isp × g₀ × ln(initial mass / dry mass)
+            </div>
+            <p class="hint">
+                Educational model: vertical, one-dimensional ascent with
+                constant thrust and specific impulse, variable mass, and
+                atmospheric drag. It omits staging, wind, changing gravity,
+                engine transients and many real launch effects.
+            </p>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const $ = id => document.getElementById(id);
+            const g = 9.81;
+            const rho0 = 1.225;
+            const scaleHeight = 8500;
+
+            const ids = ["dryMass", "fuelMass", "thrust", "isp", "area", "cd"];
+            let running = false;
+            let frame = null;
+            let lastTime = null;
+            let state;
+
+            function config() {
+                return {
+                    dry: Number($("dryMass").value),
+                    fuel: Number($("fuelMass").value),
+                    thrust: Number($("thrust").value),
+                    isp: Number($("isp").value),
+                    area: Number($("area").value),
+                    cd: Number($("cd").value)
+                };
+            }
+
+            function fmt(value, digits = 0) {
+                return Number(value).toLocaleString("en-US", {
+                    maximumFractionDigits: digits,
+                    minimumFractionDigits: digits
+                });
+            }
+
+            function idealDeltaV(c) {
+                return c.isp * g * Math.log((c.dry + c.fuel) / c.dry);
+            }
+
+let previousValues = null;
+
+function updateWhyExplanation() {
+    const c = config();
+
+    const parameters = [
+        { id: "dryMass", value: c.dry, title: "Dry mass" },
+        { id: "fuelMass", value: c.fuel, title: "Propellant" },
+        { id: "thrust", value: c.thrust, title: "Engine thrust" },
+        { id: "isp", value: c.isp, title: "Specific impulse" },
+        { id: "area", value: c.area, title: "Reference area" },
+        { id: "cd", value: c.cd, title: "Drag coefficient" }
+    ];
+
+    let changed = parameters.find(p =>
+        previousValues && p.value !== previousValues[p.id]
+    );
+
+    if (!changed) {
+        changed = parameters[0];
+    }
+
+    const explanations = {
+        dryMass: {
+            title: "You changed the dry mass.",
+            text: "Dry mass is the rocket's structure, engines and payload without propellant. More dry mass lowers the initial thrust-to-weight ratio and usually reduces initial acceleration.",
+            impact: "Higher dry mass → lower initial TWR and acceleration; ideal Δv also decreases for the same propellant and engine efficiency."
+        },
+        fuelMass: {
+            title: "You changed the propellant.",
+            text: "Propellant is consumed by the engine. More propellant increases the available burn time and ideal velocity change, but also increases the rocket's initial mass.",
+            impact: "More propellant → longer potential burn and higher ideal Δv, but lower initial TWR if thrust and dry mass stay constant."
+        },
+        thrust: {
+            title: "You changed engine thrust.",
+            text: "Thrust is the force pushing the rocket upward. Greater thrust increases net force and acceleration when mass, gravity and drag are unchanged.",
+            impact: "More thrust → higher acceleration and faster propellant consumption at fixed specific impulse."
+        },
+        isp: {
+            title: "You changed specific impulse.",
+            text: "Specific impulse measures how efficiently the engine uses propellant. Higher specific impulse produces more ideal velocity change from the same mass ratio.",
+            impact: "Higher Isp → higher ideal Δv and lower propellant flow at fixed thrust."
+        },
+        area: {
+            title: "You changed the reference area.",
+            text: "Reference area is the effective area used in the drag calculation. A larger area produces more aerodynamic resistance at the same speed, air density and drag coefficient.",
+            impact: "More area → more drag, which can reduce net acceleration during flight."
+        },
+        cd: {
+            title: "You changed the drag coefficient.",
+            text: "The drag coefficient represents how the rocket's shape and airflow affect aerodynamic resistance. A higher value produces more drag under the same conditions.",
+            impact: "Higher Cd → more drag and generally less acceleration during flight."
+        }
+    };
+
+    const explanation = explanations[changed.id];
+
+    $("whyTitle").textContent = explanation.title;
+    $("whyExplanation").textContent = explanation.text;
+    $("whyImpact").textContent = "QUICK IMPACT: " + explanation.impact;
+
+    previousValues = Object.fromEntries(
+        parameters.map(p => [p.id, p.value])
+    );
+}
+
+            function updateLabels() {
+                const c = config();
+                updateWhyExplanation();
+                $("dryMassOut").textContent = fmt(c.dry) + " kg";
+                $("fuelMassOut").textContent = fmt(c.fuel) + " kg";
+                $("thrustOut").textContent = fmt(c.thrust) + " N";
+                $("ispOut").textContent = fmt(c.isp) + " s";
+                $("areaOut").textContent = c.area.toFixed(1) + " m²";
+                $("cdOut").textContent = c.cd.toFixed(2);
+
+                const mass0 = c.dry + c.fuel;
+                $("twRatio").textContent = (c.thrust / (mass0 * g)).toFixed(2);
+                $("idealDv").textContent = (idealDeltaV(c) / 1000).toFixed(2) + " km/s";
+                $("equation").textContent =
+                    "Δv = " + c.isp + " × 9.81 × ln(" +
+                    fmt(mass0) + " / " + fmt(c.dry) + ") = " +
+                    fmt(idealDeltaV(c), 1) + " m/s";
+
+                if (!running) resetFlight(false);
+            }
+
+            function resetFlight(showStatus = true) {
+                if (frame !== null) cancelAnimationFrame(frame);
+                frame = null;
+                running = false;
+                lastTime = null;
+
+                const c = config();
+                state = {
+                    altitude: 0,
+                    velocity: 0,
+                    fuel: c.fuel,
+                    time: 0
+                };
+
+                $("altitude").textContent = "0 m";
+                $("velocity").textContent = "0 m/s";
+                $("acceleration").textContent = "0 m/s²";
+                $("netForce").textContent = "0 N";
+                $("fuelRemaining").textContent = "100%";
+                $("fuelBar").style.width = "100%";
+                $("rocket").style.transform = "translateY(0)";
+                $("flame").style.display = "block";
+                $("launchButton").disabled = false;
+
+                if (showStatus) {
+                    $("status").textContent =
+                        "Simulation reset. Review your configuration and launch again.";
+                }
+            }
+
+            function launch() {
+                if (running) return;
+
+                const c = config();
+                const mass0 = c.dry + c.fuel;
+                if (c.thrust <= mass0 * g) {
+                    $("status").textContent =
+                        "Liftoff not possible: initial thrust must exceed initial weight.";
+                    return;
+                }
+
+                resetFlight(false);
+                running = true;
+                $("launchButton").disabled = true;
+                $("status").textContent =
+                    "Engine ignited. Tracking vertical ascent in the simplified model.";
+                frame = requestAnimationFrame(tick);
+            }
+
+            function tick(timestamp) {
+                if (!running) return;
+                if (lastTime === null) lastTime = timestamp;
+                const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+                lastTime = timestamp;
+
+                const c = config();
+                const mdot = c.thrust / (c.isp * g);
+                const burn = Math.min(state.fuel, mdot * dt);
+                const massBefore = c.dry + state.fuel;
+                state.fuel -= burn;
+                state.time += dt;
+
+                const mass = c.dry + state.fuel;
+                const rho = rho0 * Math.exp(-Math.max(0, state.altitude) / scaleHeight);
+                const drag = 0.5 * rho * state.velocity * Math.abs(state.velocity) * c.cd * c.area;
+                const netForce = c.thrust * (state.fuel > 0 ? 1 : 0) - mass * g - drag;
+                const acceleration = netForce / mass;
+
+                state.velocity += acceleration * dt;
+                state.altitude = Math.max(0, state.altitude + state.velocity * dt);
+
+                const percentage = 100 * state.fuel / c.fuel;
+                $("altitude").textContent = fmt(state.altitude) + " m";
+                $("velocity").textContent = fmt(state.velocity, 1) + " m/s";
+                $("acceleration").textContent = fmt(acceleration, 2) + " m/s²";
+                $("netForce").textContent = fmt(netForce) + " N";
+                $("fuelRemaining").textContent = fmt(percentage, 1) + "%";
+                $("fuelBar").style.width = percentage + "%";
+
+                
+const scene = document.querySelector(".launch-scene");
+const rocketHeight = $("rocket").offsetHeight;
+const maxLift = Math.max(
+    0,
+    scene.clientHeight / 2 - rocketHeight / 2 - 20
+);
+
+const liftOffset = Math.min(maxLift, state.altitude / 12);
+
+$("rocket").style.transform =
+    "translateY(-" + liftOffset + "px)";
+
+
+                if (state.fuel <= 0) {
+                    state.fuel = 0;
+                    $("flame").style.display = "none";
+                }
+
+                if (state.altitude <= 0 && state.velocity <= 0 && state.time > 1) {
+                    running = false;
+                    $("launchButton").disabled = false;
+                    $("status").textContent =
+                        "The rocket returned to the launch level. Try adjusting thrust or mass.";
+                    return;
+                }
+
+                if (state.time >= 120 || state.altitude >= 100000) {
+                    running = false;
+                    $("launchButton").disabled = false;
+                    $("status").textContent =
+                        "Simulation limit reached. Reset to run another mission.";
+                    return;
+                }
+
+                frame = requestAnimationFrame(tick);
+            }
+
+            ids.forEach(id => $(id).addEventListener("input", updateLabels));
+            $("launchButton").addEventListener("click", launch);
+            $("resetButton").addEventListener("click", () => resetFlight(true));
+
+            updateLabels();
+        })();
+    </script>
+</body>
+</html>
