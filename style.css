@@ -452,3 +452,60 @@ a.lab-card:hover {
         padding: 30px 20px;
     }
 }
+.coming-soon-card {
+    border: 1px dashed rgba(101, 230, 196, 0.45);
+    cursor: default;
+}
+
+.coming-soon-label {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 12px;
+    border: 1px solid rgba(101, 230, 196, 0.4);
+    border-radius: 20px;
+    color: #65E6C4;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.reviews-section {
+    text-align: center;
+    padding: 60px 20px;
+    margin: 30px auto;
+    max-width: 850px;
+}
+
+.reviews-section .section-tag {
+    color: #65e6c4;
+    letter-spacing: 3px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.reviews-section h2 {
+    margin: 12px 0;
+    font-size: clamp(28px, 4vw, 42px);
+}
+
+.reviews-section p {
+    line-height: 1.7;
+}
+
+.review-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: #65e6c4;
+    color: #071526;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.review-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(101, 230, 196, 0.2);
+}
+
