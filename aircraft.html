@@ -1,0 +1,817 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroLab | Aircraft Design Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+
+
+    <style>
+        .aircraft-page {
+            max-width: 1250px;
+            margin: auto;
+            padding: 30px 20px;
+            color: #eaf5ff;
+        }
+
+        .aircraft-page h1 {
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            margin: 10px 0;
+        }
+
+        .aircraft-subtitle {
+            color: #a9c4d9;
+            margin-bottom: 28px;
+        }
+
+        .aircraft-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(270px, 1fr);
+            gap: 22px;
+        }
+
+        .aircraft-card {
+            background: #101d31;
+            border: 1px solid #29415b;
+            border-radius: 18px;
+            padding: 22px;
+            min-width: 0;
+        }
+
+        .aircraft-card h2 {
+            margin-top: 0;
+        }
+
+        .aircraft-preview {
+            min-height: 370px;
+            border-radius: 14px;
+            background:
+                radial-gradient(ellipse at center, #173655, #07111f 72%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .aircraft-placeholder {
+            font-size: 5rem;
+            filter: drop-shadow(0 0 20px #61e6bd55);
+        }
+
+        .aircraft-preview p {
+            color: #a9c4d9;
+            padding: 0 15px;
+        }
+
+        .aircraft-control {
+            margin: 22px 0;
+        }
+
+        .aircraft-control label {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .aircraft-control input,
+        .aircraft-control select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .aircraft-control input[type="range"] {
+            accent-color: #61e6bd;
+        }
+
+        .aircraft-control select {
+            padding: 11px;
+            background: #091321;
+            color: #eaf5ff;
+            border: 1px solid #49637d;
+            border-radius: 8px;
+        }
+
+        .aircraft-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .aircraft-metric {
+            background: #091321;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .aircraft-metric span {
+            display: block;
+            color: #a9c4d9;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .aircraft-metric strong {
+            color: #61e6bd;
+            font-size: 1.2rem;
+        }
+
+        .aircraft-note {
+            color: #a9c4d9;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 760px) {
+            .aircraft-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .aircraft-preview {
+                min-height: 280px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="aircraft-page">
+        <p>AEROLAB / AIRCRAFT SYSTEMS</p>
+
+        <h1>Aircraft Design Studio ✈️</h1>
+
+        <p class="aircraft-subtitle">
+            Shape your aircraft. Explore its geometry. Discover the science of flight.
+        </p>
+
+        <div class="aircraft-grid">
+            <section class="aircraft-card">
+                <h2>01 / Aircraft Preview</h2>
+
+                <div class="aircraft-preview" id="aircraftViewer"
+     style="position:relative; padding:0; overflow:hidden;">
+    <div id="aircraft3D"
+         style="width:100%; height:370px; cursor:grab;"></div>
+
+    <div style="position:absolute; bottom:12px; left:12px;
+                color:#a9c4d9; font-size:12px; pointer-events:none;">
+        DRAG TO ROTATE · SCROLL TO ZOOM
+    </div>
+</div>
+
+                <p class="aircraft-note">
+                    Design workspace · Units are in metres unless stated otherwise.
+                </p>
+            </section>
+
+            <section class="aircraft-card">
+                <h2>02 / Geometry Controls</h2>
+
+                <div class="aircraft-control">
+                    <label for="aircraftType">Aircraft type</label>
+                    <select id="aircraftType">
+                        <option value="trainer">Trainer aircraft</option>
+                        <option value="glider">Glider</option>
+                        <option value="passenger">Passenger aircraft</option>
+                    </select>
+                </div>
+                <div class="aircraft-control">
+                    <label for="wingColor">Wing colour</label>
+                    <input
+                        type="color"
+                        id="wingColor"
+                        value="#61e6bd"
+                        style="width:100%; height:45px; cursor:pointer;"
+    >
+                </div>
+
+                <div class="aircraft-control">
+                    <label for="wingspan">
+                        Wingspan <span id="wingspanValue">12.0 m</span>
+                    </label>
+                    <input type="range" id="wingspan"
+                           min="6" max="36" step="0.5" value="12">
+                </div>
+
+                <div class="aircraft-control">
+                    <label for="chord">
+                        Wing chord <span id="chordValue">1.5 m</span>
+                    </label>
+                    <input type="range" id="chord"
+                           min="0.8" max="5" step="0.1" value="1.5">
+                </div>
+
+                <div class="aircraft-control">
+                    <label for="fuselage">
+                        Fuselage length <span id="fuselageValue">9.0 m</span>
+                    </label>
+                    <input type="range" id="fuselage"
+                           min="5" max="40" step="0.5" value="9">
+                </div>
+
+                <div class="aircraft-control">
+                    <label for="speed">
+                        Airspeed <span id="speedValue">100 km/h</span>
+                    </label>
+                    <input type="range" id="speed"
+                           min="40" max="350" step="5" value="100">
+                </div>
+
+                <div class="aircraft-control">
+                    <label for="angle">
+                        Angle of attack <span id="angleValue">4°</span>
+                    </label>
+                    <input type="range" id="angle"
+                           min="-4" max="12" step="1" value="4">
+                </div>
+            </section>
+        </div>
+
+        <section class="aircraft-card" style="margin-top:22px">
+            <h2>03 / Aerodynamic Analysis</h2>
+
+            <div class="aircraft-metrics">
+                <div class="aircraft-metric">
+                    <span>Wing area</span>
+                    <strong id="wingArea">—</strong>
+                </div>
+
+                <div class="aircraft-metric">
+                    <span>Estimated lift</span>
+                    <strong id="lift">—</strong>
+                </div>
+
+                <div class="aircraft-metric">
+                    <span>Estimated drag</span>
+                    <strong id="drag">—</strong>
+                </div>
+
+                <div class="aircraft-metric">
+                    <span>Lift-to-drag ratio</span>
+                    <strong id="ldRatio">—</strong>
+                </div>
+            </div>
+
+            <p class="aircraft-note">
+                Educational model: aerodynamic estimates depend on simplified
+                assumptions. They are not validated aircraft-design or
+                flight-safety predictions.
+            </p>
+        </section>
+    </main>
+<script>
+(function () {
+    const container = document.getElementById("aircraft3D");
+
+    if (!container || !window.THREE) {
+        container.textContent =
+            "3D viewer unavailable. Check your internet connection.";
+        return;
+    }
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#07111f");
+
+    const camera = new THREE.PerspectiveCamera(
+        42, container.clientWidth / 370, 0.1, 1000
+    );
+    camera.position.set(9, 6, 11);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(container.clientWidth, 370);
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.HemisphereLight(0xd8eeff, 0x253348, 2));
+
+    const light = new THREE.DirectionalLight(0xffffff, 2.5);
+    light.position.set(5, 10, 8);
+    scene.add(light);
+
+    // =====================================
+// AEROLAB — TRAINER AIRCRAFT MODEL
+// =====================================
+
+let aircraftType = "trainer";
+let aircraft;
+function buildAircraft() {
+aircraft = new THREE.Group();
+const isGlider = aircraftType === "glider";
+const isPassenger = aircraftType === "passenger";
+scene.add(aircraft);
+
+const bodyMaterial = new THREE.MeshStandardMaterial({
+    color: 0xeaf0f5,
+    metalness: 0.32,
+    roughness: 0.3
+});
+
+const wingMaterial = new THREE.MeshStandardMaterial({
+    color: document.getElementById("wingColor")?.value || "#61e6bd",
+    metalness: 0.2,
+    roughness: 0.36,
+    side: THREE.DoubleSide
+});
+
+const mainWingMaterial = wingMaterial.clone();
+
+const glassMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x164568,
+    metalness: 0.25,
+    roughness: 0.12,
+    clearcoat: 1,
+    clearcoatRoughness: 0.08
+});
+
+const metalMaterial = new THREE.MeshStandardMaterial({
+    color: 0x8998a8,
+    metalness: 0.8,
+    roughness: 0.25
+});
+
+const rubberMaterial = new THREE.MeshStandardMaterial({
+    color: 0x202833,
+    roughness: 0.85
+});
+
+// Wing colour picker
+const wingColorPicker = document.getElementById("wingColor");
+
+if (wingColorPicker) {
+    wingColorPicker.addEventListener("input", event => {
+        mainWingMaterial.color.set(event.target.value);
+    });
+}
+
+// Helper for adding aircraft parts
+function addPart(geometry, material, position, rotation) {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(...position);
+
+    if (rotation) {
+        mesh.rotation.set(...rotation);
+    }
+
+    aircraft.add(mesh);
+    return mesh;
+}
+
+// 1. Smooth, tapered fuselage.
+// LatheGeometry creates a rounded body along its longitudinal axis.
+const fuselageLengthSlider = document.getElementById("fuselage");
+const fuselageLengthScale = Number(fuselageLengthSlider.value) / 9;
+const fuselageProfile = [
+    new THREE.Vector2(0.025, -3.5),
+    new THREE.Vector2(0.075, -3.25),
+    new THREE.Vector2(0.13, -2.8),
+    new THREE.Vector2(0.18, -2.0),
+    new THREE.Vector2(0.21, -0.8),
+    new THREE.Vector2(0.22, 0.5),
+    new THREE.Vector2(0.19, 1.5),
+    new THREE.Vector2(0.14, 2.35),
+    new THREE.Vector2(0.07, 2.9),
+    new THREE.Vector2(0.02, 3.15)
+].map(point => {
+    const scale = isPassenger ? 1.5 : isGlider ? 0.95 : 1.25;
+    return new THREE.Vector2(
+    point.x * scale,
+    point.y * fuselageLengthScale
+);
+});
+
+
+const fuselageGeometry = new THREE.LatheGeometry(
+    fuselageProfile,
+    32
+);
+
+const fuselage = addPart(
+    fuselageGeometry,
+    bodyMaterial,
+    [0, 0, 0],
+    [0, 0, -Math.PI / 2]
+);
+
+
+        // Trainer aircraft propeller
+        if (aircraftType === "trainer") {
+            const propellerHub = addPart(
+                new THREE.SphereGeometry(0.12, 16, 16),
+                metalMaterial,
+                [3.2, 0, 0]
+            );
+
+            
+            const propellerMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                metalness: 0.25,
+                roughness: 0.3
+            });
+
+            for (let i = 0; i < 2; i++) {
+                const blade = addPart(
+                    new THREE.BoxGeometry(0.09, 0.85, 0.07),
+                    propellerMaterial,
+                    [3.3, 0, 0]
+                );
+
+                blade.rotation.x = i * Math.PI / 2;
+            }
+        }
+
+// 2. Main wings — symmetrical, tapered wings
+
+
+function createWing(side) {
+    const shape = new THREE.Shape();
+
+    const baseSpan = isGlider ? 4.8 : isPassenger ? 3.8 : 4.4;
+    const wingspanSlider = document.getElementById("wingspan");
+    const span = baseSpan * (Number(wingspanSlider.value) / 12);
+    
+    const chordSlider = document.getElementById("chord");
+    const chordScale = Number(chordSlider.value) / 1.5;
+
+    shape.moveTo(0.45 * chordScale, 0);
+    shape.lineTo(-0.15 * chordScale, side * span);
+    shape.lineTo((isGlider ? -0.55 : -0.75) * chordScale, side * span);
+    shape.lineTo(-0.95 * chordScale, 0);
+    shape.closePath();
+
+    const geometry = new THREE.ExtrudeGeometry(shape, {
+        depth: 0.06,
+        bevelEnabled: true,
+        bevelSegments: 2,
+        steps: 1,
+        bevelSize: 0.02,
+        bevelThickness: 0.015
+    });
+
+    const wing = new THREE.Mesh(
+        geometry,
+        mainWingMaterial
+    );
+
+    wing.rotation.x = -Math.PI / 2;
+    wing.position.set(0, -0.15, 0);
+
+    aircraft.add(wing);
+    return wing;
+}
+
+const rightWing = createWing(1);
+const leftWing = createWing(-1);
+
+        // Passenger aircraft: two under-wing jet engines
+        if (isPassenger) {
+            const engineMaterial = new THREE.MeshStandardMaterial({
+                color: 0xc4d0dc,
+                metalness: 0.7,
+                roughness: 0.3
+            });
+
+            const engineDarkMaterial = new THREE.MeshStandardMaterial({
+                color: 0x263445,
+                metalness: 0.4,
+                roughness: 0.35
+            });
+
+            for (const side of [-1, 1]) {
+                // Engine body
+                addPart(
+                    new THREE.CylinderGeometry(0.22, 0.28, 1.0, 24),
+                    engineMaterial,
+                    [0.15, -0.28, side * 1.35],
+                    [Math.PI / 2, 0, 0]
+                );
+
+                // Dark engine intake
+                addPart(
+                    new THREE.CylinderGeometry(0.17, 0.17, 0.025, 24),
+                    engineDarkMaterial,
+                    [0.15, -0.28, side * 1.86],
+                    [Math.PI / 2, 0, 0]
+                );
+            }
+        }
+
+// 3. Rounded wing-root fairing
+const wingRoot = addPart(
+    new THREE.SphereGeometry(1, 24, 16),
+    bodyMaterial,
+    [0, -0.01, 0]
+);
+
+wingRoot.scale.set(0.95, 0.10, 0.48);
+
+// 4. Cockpit canopy
+const canopy = addPart(
+    new THREE.SphereGeometry(1, 32, 20),
+    glassMaterial,
+    [0.65, 0.29, 0]
+);
+
+canopy.scale.set(1.05, 0.23, 0.28);
+
+        // Passenger aircraft: rows of cabin windows
+        if (isPassenger) {
+            const windowMaterial = new THREE.MeshStandardMaterial({
+                color: 0x42c9f5,
+                metalness: 0.35,
+                roughness: 0.2,
+                emissive: 0x103044
+            });
+
+            for (let i = 0; i < 12; i++) {
+                const windowMesh = addPart(
+                    new THREE.SphereGeometry(0.07, 12, 8),
+                    windowMaterial,
+                    [-2.0 + i * 0.36, 0.16, 0.29]
+                );
+
+                windowMesh.scale.set(1.0, 0.65, 0.25);
+
+                const oppositeWindow = addPart(
+                    new THREE.SphereGeometry(0.07, 12, 8),
+                    windowMaterial,
+                    [-2.0 + i * 0.36, 0.16, -0.29]
+                );
+
+                oppositeWindow.scale.set(1.0, 0.65, 0.25);
+            }
+        }
+
+
+// 5. Horizontal tailplane — symmetrical left and right sides
+
+function createTailHalf(side) {
+    const shape = new THREE.Shape();
+
+    shape.moveTo(-2.45, 0);
+    shape.lineTo(-2.9, side * 1.35);
+    shape.lineTo(-3.35, side * 1.35);
+    shape.lineTo(-3.05, 0);
+    shape.closePath();
+
+    const geometry = new THREE.ExtrudeGeometry(shape, {
+        depth: 0.08,
+        bevelEnabled: true,
+        bevelSegments: 2,
+        bevelSize: 0.02,
+        bevelThickness: 0.015
+    });
+
+    const tail = new THREE.Mesh(geometry, bodyMaterial);
+    tail.rotation.x = -Math.PI / 2;
+    tail.position.y = 0.02;
+
+    aircraft.add(tail);
+    return tail;
+}
+
+const rightTail = createTailHalf(1);
+const leftTail = createTailHalf(-1);
+// 6. Vertical tail fin
+const finShape = new THREE.Shape();
+
+finShape.moveTo(-3.3, 0.05);
+finShape.lineTo(-3.0, 0.9);
+finShape.lineTo(-2.45, 0.55);
+finShape.lineTo(-2.4, 0.05);
+finShape.closePath();
+
+const finGeometry = new THREE.ExtrudeGeometry(finShape, {
+    depth: 0.09,
+    bevelEnabled: true,
+    bevelSegments: 2,
+    bevelSize: 0.025,
+    bevelThickness: 0.02
+});
+
+addPart(
+    finGeometry,
+    bodyMaterial,
+    [0, 0, -0.045]
+);
+
+// 7. Landing gear
+function createWheel(x, y, z) {
+    const wheel = addPart(
+        new THREE.CylinderGeometry(0.16, 0.16, 0.11, 24),
+        rubberMaterial,
+        [x, y, z],
+        [Math.PI / 2, 0, 0]
+    );
+
+    return wheel;
+}
+
+function createStrut(x, z) {
+    addPart(
+        new THREE.CylinderGeometry(0.035, 0.045, 0.62, 12),
+        metalMaterial,
+        [x, -0.48, z]
+    );
+
+    createWheel(x, -0.79, z);
+}
+
+createStrut(0.45, -0.65);
+createStrut(0.45, 0.65);
+
+// Nose landing gear
+addPart(
+    new THREE.CylinderGeometry(0.03, 0.04, 0.42, 12),
+    metalMaterial,
+    [2.15, -0.4, 0]
+);
+
+createWheel(2.15, -0.63, 0);
+
+// 8. Ground reference grid
+const grid = new THREE.GridHelper(
+    20,
+    20,
+    0x31516c,
+    0x193047
+);
+
+grid.position.y = -1.05;
+scene.add(grid);
+}
+buildAircraft();
+const aircraftMenu = document.getElementById("aircraftType");
+
+aircraftMenu.addEventListener("change", function () {
+    scene.remove(aircraft);
+    aircraftType = aircraftMenu.value;
+    buildAircraft();
+});
+const wingspanSlider = document.getElementById("wingspan");
+const wingspanLabel = document.getElementById("wingspanValue");
+
+wingspanSlider.addEventListener("input", function () {
+    wingspanLabel.textContent = Number(this.value).toFixed(1) + " m";
+
+    scene.remove(aircraft);
+    buildAircraft();
+});
+
+const chordSlider = document.getElementById("chord");
+const chordLabel = document.getElementById("chordValue");
+
+chordSlider.addEventListener("input", function () {
+    chordLabel.textContent = Number(this.value).toFixed(1) + " m";
+
+    scene.remove(aircraft);
+    buildAircraft();
+});
+
+const fuselageSlider = document.getElementById("fuselage");
+const fuselageLabel = document.getElementById("fuselageValue");
+
+fuselageSlider.addEventListener("input", function () {
+    fuselageLabel.textContent = Number(this.value).toFixed(1) + " m";
+
+    scene.remove(aircraft);
+    buildAircraft();
+});
+// Speed label
+const speedSlider = document.getElementById("speed");
+const speedLabel = document.getElementById("speedValue");
+
+speedSlider.addEventListener("input", function () {
+    speedLabel.textContent = this.value + " km/h";
+});
+
+// Angle of attack label
+const angleSlider = document.getElementById("angle");
+const angleLabel = document.getElementById("angleValue");
+
+angleSlider.addEventListener("input", function () {
+    angleLabel.textContent = this.value + "°";
+});
+
+function updateAerodynamics() {
+    const wingspan = Number(document.getElementById("wingspan").value);
+    const chord = Number(document.getElementById("chord").value);
+    const speedKmh = Number(speedSlider.value);
+    const angleDeg = Number(angleSlider.value);
+
+    // Wing area: approximate rectangular reference wing
+    const wingArea = wingspan * chord;
+
+    // Convert airspeed from km/h to m/s
+    const speed = speedKmh / 3.6;
+
+    // Simplified sea-level air density
+    const rho = 1.225;
+
+    // Educational approximation, not a real aircraft prediction
+    const angleRad = angleDeg * Math.PI / 180;
+    const liftCoefficient = Math.max(
+        0,
+        Math.min(1.4, 0.2 + 4.5 * angleRad)
+    );
+
+    const dragCoefficient =
+        0.03 + 0.06 * liftCoefficient * liftCoefficient;
+
+    const dynamicPressure = 0.5 * rho * speed * speed;
+
+    const lift = dynamicPressure * wingArea * liftCoefficient;
+    const drag = dynamicPressure * wingArea * dragCoefficient;
+    const ratio = drag > 0 ? lift / drag : 0;
+
+    document.getElementById("wingArea").textContent =
+        wingArea.toFixed(2) + " m²";
+
+    document.getElementById("lift").textContent =
+        lift.toFixed(0) + " N";
+
+    document.getElementById("drag").textContent =
+        drag.toFixed(0) + " N";
+
+    document.getElementById("ldRatio").textContent =
+        ratio.toFixed(2);
+}
+
+// Update the calculations when the aerodynamic controls move
+[wingspanSlider, chordSlider, speedSlider, angleSlider].forEach(slider => {
+    slider.addEventListener("input", updateAerodynamics);
+});
+
+// Show initial results immediately
+updateAerodynamics();
+
+ 
+
+
+
+
+
+    let dragging = false;
+    let previousX = 0;
+    let previousY = 0;
+
+    container.addEventListener("pointerdown", event => {
+        dragging = true;
+        previousX = event.clientX;
+        previousY = event.clientY;
+        container.setPointerCapture(event.pointerId);
+    });
+
+    container.addEventListener("pointermove", event => {
+        if (!dragging) return;
+
+        aircraft.rotation.y += (event.clientX - previousX) * 0.01;
+        aircraft.rotation.z += (event.clientY - previousY) * 0.005;
+
+        previousX = event.clientX;
+        previousY = event.clientY;
+    });
+
+    container.addEventListener("pointerup", () => {
+        dragging = false;
+    });
+
+    container.addEventListener("pointercancel", () => {
+        dragging = false;
+    });
+
+    container.addEventListener("wheel", event => {
+        event.preventDefault();
+        camera.position.multiplyScalar(event.deltaY > 0 ? 1.08 : 0.92);
+        camera.position.clampLength(7, 28);
+    }, { passive: false });
+
+    function resize() {
+        const width = container.clientWidth;
+        if (!width) return;
+
+        camera.aspect = width / 370;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, 370);
+    }
+
+    window.addEventListener("resize", resize);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    animate();
+})();
+</script>
+</body>
+</html>
